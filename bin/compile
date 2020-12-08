@@ -88,7 +88,7 @@ for PACKAGE in $(cat $BUILD_DIR/Aptfile | grep -v -s -e '^#' | grep -v -s -e "^:
   else
     topic "Fetching .debs for $PACKAGE"
     export DEEPS="$(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances $PACKAGE | grep '^\w' | sort -u)"
-    apt-get $APT_OPTIONS -y $APT_FORCE_YES -d install --reinstall $("${PACKAGE} ${DEEPS//$'\n'/ }") | indent
+    apt-get $APT_OPTIONS -y $APT_FORCE_YES -d install --reinstall $("${DEEPS//$'\n'/ }") | indent
   fi
 done
 
