@@ -89,7 +89,7 @@ for PACKAGE in $(cat $BUILD_DIR/Aptfile | grep -v -s -e '^#' | grep -v -s -e "^:
     topic "Fetching .debs for $PACKAGE"
     
     apt-get $APT_OPTIONS -y $APT_FORCE_YES -d install --reinstall $(apt-cache depends $PACKAGE | \
-     grep -Po 'Depends:\s+\K[^ ]+$' | tr '\n' ' ') | indent
+     grep -Po 'Depends:\s+\K[^ ]+$' | tr '\n' ' ')
   fi
 done
 
