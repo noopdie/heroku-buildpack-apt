@@ -87,8 +87,8 @@ for PACKAGE in $(cat $BUILD_DIR/Aptfile | grep -v -s -e '^#' | grep -v -s -e "^:
     curl -s -L -z $PACKAGE_FILE -o $PACKAGE_FILE $PACKAGE 2>&1 | indent
   else
     topic "Fetching .debs for $PACKAGE"
-    export DEEPS="$(apt-cache depends --recurse --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances $PACKAGE | grep '^\w' | sort -u)"
-    apt-get $APT_OPTIONS -y $APT_FORCE_YES -d install --reinstall ${DEEPS//$'\n'/ } $PACKAGE
+    export DEEPS="$(apt-cache depends --recurse --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --no-recommends $PACKAGE | grep '^\w' | sort -u)"
+    apt-get $APT_OPTIONS -y $APT_FORCE_YES -d install --no-install-recommends --reinstall ${DEEPS//$'\n'/ } $PACKAGE
   fi
 done
 
