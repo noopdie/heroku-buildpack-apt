@@ -99,12 +99,22 @@ for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   dpkg -x $DEB $BUILD_DIR/.apt/
 done
 
-cp $BUILD_DIR/Aptfile $BUILD_DIR/.apt/Aptfile
 cp /etc/apt/sources.list $BUILD_DIR/.apt/etc/apt/sources.list
 $BUILD_DIR/.apt/usr/bin/fakeroot-tcp -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/libfakeroot/libfakeroot-tcp.so --faked $BUILD_DIR/.apt/usr/bin/faked-tcp $BUILD_DIR/.apt/usr/bin/fakechroot -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/fakechroot/libfakechroot.so $BUILD_DIR/.apt/usr/sbin/chroot $BUILD_DIR/.apt bash<<EOF
 touch /var/lib/dpkg/status
-apt update && bash -c 'for PACKAGE in $(cat /Aptfile | grep -v -s -e "^#" | grep -v -s -e "^:repo:"); do; topic "Installing $PACKAGE"; apt-get -y $APT_FORCE_YES install $PACKAGE; done'
-exit
+apt update
+
+for PACKAGE in $(cat $BUILD_DIR/Aptfile | grep -v -s -e '^#' | grep -v -s -e "^:repo:"); do
+  if [[ $PACKAGE == *deb ]]; then
+    PACKAGE_NAME=$(basename $PACKAGE .deb)
+    PACKAGE_FILE=$APT_CACHE_DIR/archives/$PACKAGE_NAME.deb
+
+    topic "Fetching $PACKAGE"
+    curl -s -L -z $PACKAGE_FILE -o $PACKAGE_FILE $PACKAGE 2>&1 | indent
+  else
+    topic "Installing $PACKAGE"
+    apt-get -y $APT_FORCE_YES install $PACKAGE
+done
 EOF
 
 topic "Writing profile script"
