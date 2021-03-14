@@ -100,7 +100,7 @@ for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
 done
 
 cp $BUILD_DIR/Aptfile $BUILD_DIR/.apt/Aptfile
-cp /etc/apt/sources.list /app/.apt/etc/apt/sources.list
+cp /etc/apt/sources.list $BUILD_DIR/.apt/etc/apt/sources.list
 /app/.apt/usr/bin/fakeroot-tcp -l/app/.apt/usr/lib/x86_64-linux-gnu/libfakeroot/libfakeroot-tcp.so --faked /app/.apt/usr/bin/faked-tcp /app/.apt/usr/bin/fakechroot -l /app/.apt/usr/lib/x86_64-linux-gnu/fakechroot/libfakechroot.so /app/.apt/usr/sbin/chroot /app/.apt bash
 touch /var/lib/dpkg/status
 apt update
