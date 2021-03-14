@@ -101,7 +101,8 @@ done
 
 cp $BUILD_DIR/Aptfile $BUILD_DIR/.apt/Aptfile
 cp /etc/apt/sources.list $BUILD_DIR/.apt/etc/apt/sources.list
-$BUILD_DIR/.apt/usr/bin/fakeroot-tcp -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/libfakeroot/libfakeroot-tcp.so --faked $BUILD_DIR/.apt/usr/bin/faked-tcp $BUILD_DIR/.apt/usr/bin/fakechroot -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/fakechroot/libfakechroot.so $BUILD_DIR/.apt/usr/sbin/chroot $BUILD_DIR/.apt touch /var/lib/dpkg/status
+$BUILD_DIR/.apt/usr/bin/fakeroot-tcp -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/libfakeroot/libfakeroot-tcp.so --faked $BUILD_DIR/.apt/usr/bin/faked-tcp $BUILD_DIR/.apt/usr/bin/fakechroot -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/fakechroot/libfakechroot.so $BUILD_DIR/.apt/usr/sbin/chroot $BUILD_DIR/.apt bash<<EOF
+touch /var/lib/dpkg/status
 apt update
 for PACKAGE in $(cat /Aptfile | grep -v -s -e '^#' | grep -v -s -e "^:repo:"); do
   if [[ $PACKAGE == *deb ]]; then
@@ -116,7 +117,7 @@ for PACKAGE in $(cat /Aptfile | grep -v -s -e '^#' | grep -v -s -e "^:repo:"); d
   fi
 done
 exit
-
+EOF
 
 topic "Writing profile script"
 mkdir -p $BUILD_DIR/.profile.d
