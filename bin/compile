@@ -99,6 +99,26 @@ for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   dpkg -x $DEB $BUILD_DIR/.apt/
 done
 
+cp $BUILD_DIR/Aptfile $BUILD_DIR/.apt/Aptfile
+cp /etc/apt/sources.list /app/.apt/etc/apt/sources.list
+/app/.apt/usr/bin/fakeroot-tcp -l/app/.apt/usr/lib/x86_64-linux-gnu/libfakeroot/libfakeroot-tcp.so --faked /app/.apt/usr/bin/faked-tcp /app/.apt/usr/bin/fakechroot -l /app/.apt/usr/lib/x86_64-linux-gnu/fakechroot/libfakechroot.so /app/.apt/usr/sbin/chroot /app/.apt bash
+touch /var/lib/dpkg/status
+apt update
+for PACKAGE in $(cat /Aptfile | grep -v -s -e '^#' | grep -v -s -e "^:repo:"); do
+  if [[ $PACKAGE == *deb ]]; then
+    PACKAGE_NAME=$(basename $PACKAGE .deb)
+    PACKAGE_FILE=$APT_CACHE_DIR/archives/$PACKAGE_NAME.deb
+
+    topic "Fetching $PACKAGE"
+    curl -s -L -z $PACKAGE_FILE -o $PACKAGE_FILE $PACKAGE 2>&1 | indent
+  else
+    topic "Installing $PACKAGE"
+    apt-get -y $APT_FORCE_YES install $PACKAGE
+  fi
+done
+exit
+
+
 topic "Writing profile script"
 mkdir -p $BUILD_DIR/.profile.d
 cat <<EOF >$BUILD_DIR/.profile.d/000_apt.sh
@@ -110,6 +130,8 @@ export CPATH="\$INCLUDE_PATH"
 export CPPPATH="\$INCLUDE_PATH"
 export PKG_CONFIG_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/i386-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/pkgconfig:\$PKG_CONFIG_PATH"
 EOF
+
+
 
 export PATH="$BUILD_DIR/.apt/usr/bin:$PATH"
 export LD_LIBRARY_PATH="$BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu:$BUILD_DIR/.apt/usr/lib/i386-linux-gnu:$BUILD_DIR/.apt/usr/lib:$LD_LIBRARY_PATH"
