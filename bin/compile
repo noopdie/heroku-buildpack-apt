@@ -102,7 +102,7 @@ done
 cp /etc/apt/sources.list $BUILD_DIR/.apt/etc/apt/sources.list
 $BUILD_DIR/.apt/usr/bin/fakeroot-tcp -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/libfakeroot/libfakeroot-tcp.so --faked $BUILD_DIR/.apt/usr/bin/faked-tcp $BUILD_DIR/.apt/usr/bin/fakechroot -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/fakechroot/libfakechroot.so $BUILD_DIR/.apt/usr/sbin/chroot $BUILD_DIR/.apt bash -c 'touch /var/lib/dpkg/status && apt update'
 cp $BUILD_DIR/Appfile $BUILD_DIR/.apt/Appfile
-    $BUILD_DIR/.apt/usr/bin/fakeroot-tcp -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/libfakeroot/libfakeroot-tcp.so --faked $BUILD_DIR/.apt/usr/bin/faked-tcp $BUILD_DIR/.apt/usr/bin/fakechroot -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/fakechroot/libfakechroot.so $BUILD_DIR/.apt/usr/sbin/chroot $BUILD_DIR/.apt bash -c 'apt install -y $(cat /Appfile)'
+    $BUILD_DIR/.apt/usr/bin/fakeroot-tcp -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/libfakeroot/libfakeroot-tcp.so --faked $BUILD_DIR/.apt/usr/bin/faked-tcp $BUILD_DIR/.apt/usr/bin/fakechroot -l $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/fakechroot/libfakechroot.so $BUILD_DIR/.apt/usr/sbin/chroot $BUILD_DIR/.apt bash -c 'apt install -y --no-install-recommends $(cat /Appfile)'
 
 topic "Writing profile script"
 mkdir -p $BUILD_DIR/.profile.d
